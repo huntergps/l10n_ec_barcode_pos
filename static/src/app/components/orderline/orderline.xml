@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="UnitSelectionPopupWidget">
+        <Dialog size="'md'" title="props.title || 'Select'">
+            <div class="popup popup-selection">
+
+                <div class='selection scrollable-y touch-scrollable px-2'>
+                    <t t-foreach="props.list || []" t-as="item" t-key="item.id">
+                        <!-- <div class="selection-item selection-unit p-2 fs-2" t-att-class="{ 'selected': item.selected }" t-on-click="click_item" t-att-data-item-index='item_index'>
+                            <t t-esc='item.name' />
+                        </div> -->
+                        <div
+                            class="selection-item selection-unit p-2 fs-2"
+                            t-att-class="{ 'selected': item.selected }"
+                            t-on-click="click_item"
+                            t-att-data-item-index="props.list.indexOf(item)">
+                            <t t-esc="item.name" />
+                        </div>
+                    </t>
+                </div>
+
+                <t t-set-slot="footer">
+                    <div class="d-flex w-100 justify-content-start gap-2">
+                        <button class="button btn btn-success o-default-button confirm" t-att-class="{ 'oe_hidden': !props.is_selected}" t-on-click="click_confirm">OK</button>
+                        <button class="button btn btn-secondary o-default-button cancel" t-on-click="cancel">Cancelar</button>
+                    </div>
+                </t>
+            </div>
+        </Dialog>
+    </t>
+    <t t-name="UnitSelectionUomPos">
+
+    <Dialog size="'md'" title="props.title || 'Seleccione la Unidad de Medida'">
+       <div class="popup popup-selection">
+           <!-- Lista de unidades de medida -->
+           <div class='selection scrollable-y touch-scrollable px-2'>
+               <t t-foreach="uomList" t-as="item" t-key="item.id">
+                   <div
+                       class="selection-item selection-unit p-2 fs-2"
+                       t-att-class="{ 'selected': item.id === selectedUomId }"
+                       t-on-click="() => selectUom(item)">
+                       <t t-esc="item.name" />
+                   </div>
+               </t>
+           </div>
+
+           <!-- Botones de confirmación y cancelación -->
+           <t t-set-slot="footer">
+               <div class="d-flex w-100 justify-content-start gap-2">
+                   <button class="button btn btn-success o-default-button confirm"
+                           t-on-click="confirmSelection">Aceptar</button>
+                   <button class="button btn btn-secondary o-default-button cancel"
+                           t-on-click="cancelSelection">Cancelar</button>
+               </div>
+           </t>
+       </div>
+   </Dialog>
+</t>
+
+
+    <t t-name="Orderline" t-inherit="point_of_sale.Orderline" t-inherit-mode="extension" owl="1">
+        <xpath expr="//ul[hasclass('info-list')]//li[hasclass('price-per-unit')]" position="replace">
+
+          <li class="price-per-unit">
+              <span class="qty px-1 border rounded text-bg-view fw-bolder me-1" t-esc="line.qty"/>
+              <t t-if="!props.basic_receipt">
+                  x
+                  <t t-if="line.price !== 0">
+                      <s t-esc="line.oldUnitPrice" t-if="line.oldUnitPrice" />
+                      <t t-esc="line.unitPrice" />
+                  </t>
+                  /
+              </t>
+              <t t-if="line.unit" t-esc="line.unit" />
+
+              <t t-if="this.env.services.pos.mainScreen.component.name == 'ProductScreen'">
+            <span class="button-uom ms-2 d-inline-block">
+                <i t-on-click="() => env.services.pos.open_UnitSelection_popup(ev)" class="fa fa-balance-scale fa-lg"></i>
+            </span>
+        </t>
+
+          </li>
+        </xpath>
+    </t>
+
+
+    <t t-name="Orderline" t-inherit="point_of_sale.Orderline" t-inherit-mode="extension" owl="1">
+        <xpath expr="//ul[hasclass('info-list')]//li[hasclass('price-per-unit')]" position="after">
+            <li class="orderline-controls d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-danger btn-sm delete-line"
+                  t-on-click="() => env.services.pos.deleteLineQuantity()">
+                    <i class="fa fa-trash"></i>
+                </button>
+                <div class="quantity-controls d-flex">
+                    <button type="button" class="btn btn-secondary btn-sm decrease-quantity me-2"
+                      t-on-click="() => env.services.pos.decreaseLineQuantity()">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm increase-quantity"
+                      t-on-click="() => env.services.pos.increaseLineQuantity()">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </li>
+        </xpath>
+    </t>
+
+</templates>

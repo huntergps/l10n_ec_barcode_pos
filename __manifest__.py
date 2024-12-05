@@ -18,7 +18,8 @@
         'sale',
         'purchase',
         'point_of_sale',
-        'l10n_ec_barcode_products'
+        'l10n_ec_barcode_products',
+        'l10n_ec_edi_pos',
     ],
     'data': [
         'security/ir.model.access.csv',
